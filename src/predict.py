@@ -1,5 +1,7 @@
 # Prediction interface for Cog ⚙️
 # https://github.com/replicate/cog/blob/main/docs/python.md
+import base64
+from io import BytesIO
 
 import math
 import os
@@ -114,11 +116,6 @@ class Predictor(BasePredictor):
     ) -> List[Path]:
         """Run a single prediction on the model"""
 
-        if image_num > 0 and api_key is not None and len(api_key) > 0:
-            prepare_prompt_thread = gen_prompt(api_key, prompt)
-            prepare_prompt_thread.start()
-        else:
-            prepare_prompt_thread = None
 
         if pixel == '512 * 512':
             pixel_size = 512
@@ -151,6 +148,19 @@ class Predictor(BasePredictor):
         image_height = image_height - image_height % 8
 
         image = image.resize((image_width, image_height))
+
+        # 将图像转换为字节流
+        buffered = BytesIO()
+        image.save(buffered, format="PNG")
+        img_str = base64.b64encode(buffered.getvalue()).decode()
+        image_b64 = f"data:image/png;base64,{img_str}"
+
+        # 请求OpenAI API, 生成prompt
+        if image_num > 0 and api_key is not None and len(api_key) > 0:
+            prepare_prompt_thread = gen_prompt(api_key, prompt, image_b64)
+            prepare_prompt_thread.start()
+        else:
+            prepare_prompt_thread = None
 
         print('1. Image matting:', (image_width, image_height))
         top_img = image_remove_bg(self.tracer_b7_interface, image)
