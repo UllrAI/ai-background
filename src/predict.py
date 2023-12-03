@@ -154,7 +154,7 @@ class Predictor(BasePredictor):
         image.save(buffered, format="PNG")
         img_str = base64.b64encode(buffered.getvalue()).decode()
         image_b64 = f"data:image/png;base64,{img_str}"
-        print(' Image Base64: %s' % image_b64)
+        # print(' Image Base64: %s' % image_b64)
 
 
         # 请求OpenAI API, 生成prompt
