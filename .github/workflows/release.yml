@@ -1,9 +1,6 @@
 name: Push to Replicate
 
 on:
-  push:
-    tags:
-      - 'release/*'
   workflow_dispatch:
 
 jobs:
