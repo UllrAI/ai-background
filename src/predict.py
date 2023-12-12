@@ -74,7 +74,7 @@ class Predictor(BasePredictor):
             ),
             prompt: str = Input(
                 description="Product name or prompt. If not set, use GPT4-V to recognize product.",
-                default=None
+                default=""
             ),
             negative_prompt: str = Input(
                 description="Anything you don't want in the photo",
